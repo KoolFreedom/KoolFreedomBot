@@ -49,3 +49,5 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f"Failed to reload `{cog}`\n```{e}```", discord.Color.red()))
 
+async def setup(bot):
+    await bot.add_cog(Admin(bot))

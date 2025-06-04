@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from checks import has_allowed_role, is_discord_staff
+from checks import is_admin, is_discord_staff
 
 
 class Server_Commands(commands.Cog):
@@ -9,7 +9,7 @@ class Server_Commands(commands.Cog):
         self.bot = bot
     
     @commands.command()
-    @has_allowed_role()
+    @is_admin()
     @commands.has_permissions(manage_roles=True)
     async def serverban(ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name = "Server Banned")
@@ -26,7 +26,7 @@ class Server_Commands(commands.Cog):
             await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
 
     @commands.command()
-    @has_allowed_role()
+    @is_admin()
     @commands.has_permissions(manage_roles=True)
     async def serverunban(ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="Server Banned")
