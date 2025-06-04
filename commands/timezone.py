@@ -25,6 +25,10 @@ class Timezone(commands.Cog):
 
     @commands.command()
     async def settimezone(self, ctx, timezone: str):
+        if timezone.upper() in ["EST", "CST", "MST", "PST", "EDT", "CDT", "MDT", "PDT"]:
+            await ctx.send("⚠️ Please use a region-based timezone like `America/New_York` instead of `EST`. Time abbreviations do not adjust for daylight saving time.")
+            return
+
         if timezone not in pytz.all_timezones:
             await ctx.send("❌ Invalid timezone. Try one from: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")
             return

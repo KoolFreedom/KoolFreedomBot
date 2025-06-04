@@ -4,14 +4,16 @@ from checks import is_admin, is_discord_staff
 
 
 class Server_Commands(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
+    
+    def build_embed(self, title, description, color=discord.Color.green()):
+        return discord.Embed(title=title, description=description, color=color)
     
     @commands.command()
     @is_admin()
     @commands.has_permissions(manage_roles=True)
-    async def serverban(ctx, member: discord.Member):
+    async def serverban(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name = "Server Banned")
         if role is None:
             await ctx.send(embed=self.build_embed("Role Not Found", "'Server Banned' role not found!", discord.Color.red()))
@@ -28,7 +30,7 @@ class Server_Commands(commands.Cog):
     @commands.command()
     @is_admin()
     @commands.has_permissions(manage_roles=True)
-    async def serverunban(ctx, member: discord.Member):
+    async def serverunban(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="Server Banned")
         if not role:
             await ctx.send(embed=self.build_embed("Role Not Found", "'Server Banned' role not found.", discord.Color.red()))
@@ -45,7 +47,7 @@ class Server_Commands(commands.Cog):
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
-    async def exile(ctx, member: discord.Member):
+    async def exile(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name = "Exiled")
         member_role = discord.utils.get(ctx.guild.roles, name = "Members")
         if not role:
@@ -63,7 +65,7 @@ class Server_Commands(commands.Cog):
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
-    async def forgive(ctx, member: discord.Member):
+    async def forgive(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name = "Exiled")
         member_role = discord.utils.get(ctx.guild.roles, name = "Members")
         if not role:
@@ -77,10 +79,6 @@ class Server_Commands(commands.Cog):
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
-
-
-    def build_embed(self, title, description, color=discord.Color.blue()):
-        return discord.Embed(title=title, description=description, color=color)
 
 async def setup(bot):
     await bot.add_cog(Server_Commands(bot))

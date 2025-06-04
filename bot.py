@@ -9,6 +9,8 @@ def get_prefix(bot, message):
         prefixes = json.load(f)
     return prefixes.get(str(message.guild.id), getattr(bot, "default_prefix", "!"))
 
+def build_embed(title, description, color=discord.Color.green()):
+        return discord.Embed(title=title, description=description, color=color)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -21,6 +23,11 @@ bot.default_prefix = "kf!"
 async def on_ready():
     print(f"Logged in as {bot.user} (ID: {bot.user.id})")
     print("------")
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send(embed=build_embed("Access Denied", "❌ You don't have permission to use this command.", discord.Color.red()))
 
 async def load_cogs():
     for filename in os.listdir("./commands"):
