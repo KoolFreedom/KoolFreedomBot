@@ -38,12 +38,14 @@ class Moderation(commands.Cog):
         value, unit = match.groups()
         return int(value) * time_units[unit]
     
-    @commands.command()
+    @commands.command(aliases=['purge'])
     @is_discord_staff()
     @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx: Context, amount: int):
-        await ctx.channel.purge(limit=amount + 1)
-        await ctx.send(f"Cleared {amount} messages.", delete_after=5)
+    async def clear(self, ctx: commands.Context, amount: int):
+        deleted = await ctx.channel.purge(limit=amount + 1)
+        count = len(deleted) - 1  # Subtract 1 for the command message itself
+        await ctx.send(f"Cleared {count} messages.", delete_after=5)
+
 
     @commands.command()
     @is_discord_staff()
