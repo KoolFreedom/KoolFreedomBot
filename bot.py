@@ -1,13 +1,21 @@
 import discord
 from discord.ext import commands
 import os
+import json
 import asyncio
+
+def get_prefix(bot, message):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+    return prefixes.get(str(message.guild.id), getattr(bot, "default_prefix", "!"))
+
 
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = commands.Bot(command_prefix="kf!", intents=intents)
+bot = commands.Bot(command_prefix=get_prefix, intents=intents)
+bot.default_prefix = "kf!"
 
 @bot.event
 async def on_ready():

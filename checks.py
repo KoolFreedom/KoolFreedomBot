@@ -6,7 +6,7 @@ SERVER_STAFF_ROLES = ["Moderator", "Admin", "Senior Admin"]
 DISCORD_STAFF_ROLES = ["Discord Mod", "Discord Admin"]
 BOT_DEVELOPERS = [373969695633571842, 712528833936621730, 919085826875469834]
 
-def has_allowed_role():
+def is_admin():
     async def predicate(ctx):
         return any(role.name in SERVER_STAFF_ROLES for role in ctx.author.roles)
     return commands.check(predicate)
