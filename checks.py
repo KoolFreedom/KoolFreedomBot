@@ -2,13 +2,19 @@
 
 from discord.ext import commands
 
-SERVER_STAFF_ROLES = ["Moderator", "Admin", "Senior Admin"]
-DISCORD_STAFF_ROLES = ["Discord Mod", "Discord Admin"]
+ADMIN_ROLES = ["Admin", "CONSOLE"]
+SENIOR_ROLES = ["Senior Admin", "Executive", "Assistant Executive"]
+DISCORD_STAFF_ROLES = ["Discord Moderator", "Discord Administrator"]
 BOT_DEVELOPERS = [373969695633571842, 712528833936621730, 919085826875469834]
 
 def is_admin():
     async def predicate(ctx):
-        return any(role.name in SERVER_STAFF_ROLES for role in ctx.author.roles)
+        return any(role.name in ADMIN_ROLES for role in ctx.author.roles)
+    return commands.check(predicate)
+
+def is_senior_admin():
+    async def predicate(ctx):
+        return any(role.name in SENIOR_ROLES for role in ctx.author.roles)
     return commands.check(predicate)
 
 def is_discord_staff():

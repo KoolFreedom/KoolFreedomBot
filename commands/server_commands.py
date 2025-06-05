@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from checks import is_admin, is_discord_staff
+from checks import is_admin, is_discord_staff, is_senior_admin
 
 
 class Server_Commands(commands.Cog):
@@ -44,7 +44,7 @@ class Server_Commands(commands.Cog):
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
 
-    @commands.command()
+    @commands.command() 
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
     async def exile(self, ctx, member: discord.Member):
