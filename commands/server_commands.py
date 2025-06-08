@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from checks import is_admin, is_discord_staff, is_senior_admin, is_admin_officer, is_builder_manager
+from checks import is_admin, is_discord_staff, is_admin_officer
 
 
 class Server_Commands(commands.Cog):
@@ -124,7 +124,7 @@ class Server_Commands(commands.Cog):
             return
 
         try:
-            await member.remove_roles(role)
+            await member.add_roles(role)
             await ctx.send(embed=self.build_embed("Role Added", f"Added Senior Admin role from {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to add that role.", discord.Color.red()))
@@ -144,7 +144,7 @@ class Server_Commands(commands.Cog):
             await member.remove_roles(role)
             await ctx.send(embed=self.build_embed("Role Removed", f"Removed Senior Admin role from {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
-            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to add that role.", discord.Color.red()))
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove that role.", discord.Color.red()))
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
 
