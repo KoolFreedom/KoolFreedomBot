@@ -82,7 +82,7 @@ class Server_Commands(commands.Cog):
     
     @commands.command()
     @is_admin_officer()
-    @commands.has_permission(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
     async def staffadd(self, ctx, member: discord.Member):
         staff_role = discord.utils.get(ctx.guild.roles, name = "Admin")
         if staff_role is None:
@@ -99,7 +99,7 @@ class Server_Commands(commands.Cog):
 
     @commands.command()
     @is_admin_officer()
-    @commands.has_permission(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
     async def suspend(self, ctx, member: discord.Member):
         staff_role = discord.utils.get(ctx.guild.roles, name="Admin")
         if not staff_role:
@@ -116,7 +116,7 @@ class Server_Commands(commands.Cog):
 
     @commands.command()
     @is_admin_officer()
-    @commands.has_permission(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
     async def promote(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="Senior Admin")
         if not role:
@@ -133,7 +133,7 @@ class Server_Commands(commands.Cog):
 
     @commands.command()
     @is_admin_officer()
-    @commands.has_permission(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
     async def senior_suspend(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="Senior Admin")
         if not role:
