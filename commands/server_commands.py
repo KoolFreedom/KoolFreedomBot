@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from checks import is_admin, is_discord_staff, is_senior_admin
+from checks import is_admin, is_discord_staff, is_senior_admin, is_admin_officer, is_builder_manager
 
 
 class Server_Commands(commands.Cog):
@@ -77,6 +77,74 @@ class Server_Commands(commands.Cog):
             await ctx.send(embed=self.build_embed("", f"Forgave {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
+        except Exception as e:
+            await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
+    
+    @commands.command()
+    @is_admin_officer()
+    @commands.has_permission(manage_roles=True)
+    async def staffadd(self, ctx, member: discord.Member):
+        staff_role = discord.utils.get(ctx.guild.roles, name = "Admin")
+        if staff_role is None:
+            await ctx.send(embed=self.build_embed("Role Not Found", "'Admin' role not found!", discord.Color.red()))
+            return
+    
+        try:
+            await member.add_roles(staff_role)
+            await ctx.send(embed=self.build_embed("Role Added", f"Added Admin role to {member.display_name}.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
+        except Exception as e:
+            await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
+
+    @commands.command()
+    @is_admin_officer()
+    @commands.has_permission(manage_roles=True)
+    async def suspend(self, ctx, member: discord.Member):
+        staff_role = discord.utils.get(ctx.guild.roles, name="Admin")
+        if not staff_role:
+            await ctx.send(embed=self.build_embed("Role Not Found", "'Admin' role not found.", discord.Color.red()))
+            return
+
+        try:
+            await member.remove_roles(staff_role)
+            await ctx.send(embed=self.build_embed("Role Removed", f"Removed Admin role from {member.display_name}.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove that role.", discord.Color.red()))
+        except Exception as e:
+            await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
+
+    @commands.command()
+    @is_admin_officer()
+    @commands.has_permission(manage_roles=True)
+    async def promote(self, ctx, member: discord.Member):
+        role = discord.utils.get(ctx.guild.roles, name="Senior Admin")
+        if not role:
+            await ctx.send(embed=self.build_embed("Role Not Found", "'Senior Admin' role not found.", discord.Color.red()))
+            return
+
+        try:
+            await member.remove_roles(role)
+            await ctx.send(embed=self.build_embed("Role Added", f"Added Senior Admin role from {member.display_name}.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to add that role.", discord.Color.red()))
+        except Exception as e:
+            await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
+
+    @commands.command()
+    @is_admin_officer()
+    @commands.has_permission(manage_roles=True)
+    async def senior_suspend(self, ctx, member: discord.Member):
+        role = discord.utils.get(ctx.guild.roles, name="Senior Admin")
+        if not role:
+            await ctx.send(embed=self.build_embed("Role Not Found", "'Senior Admin' role not found.", discord.Color.red()))
+            return
+
+        try:
+            await member.remove_roles(role)
+            await ctx.send(embed=self.build_embed("Role Removed", f"Removed Senior Admin role from {member.display_name}.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to add that role.", discord.Color.red()))
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
 
