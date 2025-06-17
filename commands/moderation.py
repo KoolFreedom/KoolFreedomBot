@@ -152,20 +152,6 @@ class Moderation(commands.Cog):
 
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I can't modify roles for this user.", discord.Color.red()))
-    
-    @commands.command()
-    @is_discord_staff()
-    async def snipe(self, ctx: Context):
-        msg = self.sniped_messages.get(ctx.channel.id)
-        if not msg:
-            await ctx.send("Nothing to snipe!")
-            return
-
-        embed = discord.Embed(description=msg.content or "[no content]",
-                              color=discord.Color.orange(),
-                              timestamp=msg.created_at)
-        embed.set_footer(text=f"Deleted by {msg.author.display_name}")
-        await ctx.send(embed=embed)
 
 
 
