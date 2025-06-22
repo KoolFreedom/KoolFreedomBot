@@ -3,6 +3,7 @@ import os
 import json
 import asyncio
 import re
+from datetime import datetime
 from discord.ext import commands
 from discord.ext.commands import Context
 from checks import is_discord_staff
@@ -38,21 +39,22 @@ class Moderation(commands.Cog):
         value, unit = match.groups()
         return int(value) * time_units[unit]
     
-    @commands.command(aliases=['purge'])
+    @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx: commands.Context, amount: int):
-        deleted = await ctx.channel.purge(limit=amount + 1)
-        count = len(deleted) - 1  # Subtract 1 for the command message itself
-        await ctx.send(f"Cleared {count} messages.", delete_after=5)
+    async def purge(self, ctx, msgs):
+        """Purge messages from a channel."""
+        channel = ctx.channel
+        await channel.purge(limit=(int(msgs) + 1))
+        await ctx.send(embed=discord.Embed(description=f'{ctx.author.name} deleted {msgs} messages',colour=0xbc0a1d))
 
 
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason="No reason provided"):
-        await member.ban(reason=reason)
-        await ctx.send(embed=self.build_embed("Banned", f"{member.display_name} has been banned.\nReason: {reason}"))
+        await member.ban(reason=f'{reason} || by: {ctx.author.name}', delete_message_days=0)
+        await ctx.send(embed=self.build_embed("Banned", f"{member.display_name} has been banned.\nReason: {reason}", color=0xff0004))
     
     @commands.command()
     @is_discord_staff()
@@ -100,31 +102,27 @@ class Moderation(commands.Cog):
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
     async def mute(self, ctx, member: discord.Member, *, reason="No reason provided."):
-        muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
-        if not muted_role:
-            await ctx.send(embed=self.build_embed("Missing Role", "Muted role does not exist.", discord.Color.red()))
-            return
-
-        try:
-            await member.add_roles(muted_role)
-            await ctx.send(embed=self.build_embed("User Muted", f"{member.display_name} has been muted.\nReason: {reason}", discord.Color.orange()))
-        except discord.Forbidden:
-            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign roles.", discord.Color.red()))
+        mutedrole = discord.utils.get(ctx.guild.roles, name='Muted')
+        if mutedrole is None:
+            mutedrole = discord.utils.get(ctx.guild.roles, name='muted')
+        elif mutedrole is None:
+            return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xbc0a1d))
+        await member.add_roles(mutedrole, reason = f'{reason} || by {ctx.author.name}')
+        if reason == '':
+            reason = 'no reason specified'
+        await ctx.send(embed=discord.Embed(description=f'{member} muted by: {ctx.author.name} for: {reason}', colour=0xbc0a1d))
 
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
-    async def unmute(self, ctx, member: discord.Member):
-        muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
-        if not muted_role:
-            await ctx.send(embed=self.build_embed("Missing Role", "Muted role does not exist.", discord.Color.red()))
-            return
-
-        try:
-            await member.remove_roles(muted_role)
-            await ctx.send(embed=self.build_embed("User Unmuted", f"{member.display_name} has been unmuted.", discord.Color.green()))
-        except discord.Forbidden:
-            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove roles.", discord.Color.red()))
+    async def unmute(self, ctx, member: discord.Member, *, reason=''):
+        mutedrole = discord.utils.get(ctx.guild.roles, name='Muted')
+        if mutedrole is None:
+            mutedrole = discord.utils.get(ctx.guild.roles, name='muted')
+            if mutedrole is None:
+                return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xbc0a1d))
+        await member.remove_roles(mutedrole, reason = f'{reason} || by {ctx.author.name}')
+        await ctx.send(embed=discord.Embed(description=f'{member} unmuted by {ctx.author.name}', colour=0xbc0a1d))
     
     @commands.command()
     @is_discord_staff()
