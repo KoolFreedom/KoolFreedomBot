@@ -1,7 +1,7 @@
 import discord
-from discord.ext import commands
 import aiohttp
-import random
+from datetime import datetime, timezone
+from discord.ext import commands
 
 class Integrations(commands.Cog):
     def __init__(self, bot):
@@ -87,13 +87,22 @@ class Integrations(commands.Cog):
                     latest = data[0]
                     event_type = latest.get("type", "Unknown Event")
                     actor = latest["actor"]["login"]
+                    avatar_url = latest["actor"]["avatar_url"]
                     payload = latest.get("payload", {})
+
+                    # Time since event
+                    created_at = datetime.strptime(latest["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+                    created_at = created_at.replace(tzinfo=timezone.utc)
+                    now = datetime.now(timezone.utc)
+                    delta = now - created_at
+                    minutes = int(delta.total_seconds() // 60)
+                    time_ago = f"{minutes} minute(s) ago" if minutes < 60 else f"{minutes // 60} hour(s) ago"
+
                     embed = discord.Embed(
                         title=f"{repo}",
                         url=f"https://github.com/{repo}",
                         color=discord.Color.blurple()
                     )
-                    embed.set_footer(text="Latest GitHub event")
 
                     if event_type == "PushEvent":
                         commits = payload.get("commits", [])
@@ -119,6 +128,8 @@ class Integrations(commands.Cog):
                     else:
                         embed.description = f"📌 **{event_type}** triggered by **{actor}**"
 
+                    embed.set_author(name=actor, icon_url=avatar_url)
+                    embed.set_footer(text=f"Occurred {time_ago}")
                     await ctx.send(embed=embed)
 
         except Exception as e:
