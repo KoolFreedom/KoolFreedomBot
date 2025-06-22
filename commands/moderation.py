@@ -42,10 +42,10 @@ class Moderation(commands.Cog):
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_messages=True)
-    async def purge(self, ctx, msgs):
-        channel = ctx.channel
-        await channel.purge(limit=(int(msgs) + 1))
-        await ctx.send(embed=discord.Embed(description=f'{ctx.author.name} deleted {msgs} messages',colour=0xbc0a1d))
+    async def purge(self, ctx: commands.Context, amount: int):
+        deleted = await ctx.channel.purge(limit=amount + 1)
+        count = len(deleted) - 1  # Subtract 1 for the command message itself
+        await ctx.send(embed=discord.Embed(description=f'{ctx.author.name} deleted {count} messages',colour=0xbc0a1d), delete_after=5)
 
 
     @commands.command()

@@ -15,6 +15,7 @@ def build_embed(title, description, color=discord.Color.green()):
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
+intents.presences = True
 
 bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 bot.default_prefix = "kf!"
