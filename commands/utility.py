@@ -30,7 +30,6 @@ class Utility(commands.Cog):
         msg = discord.Embed(title=f'User Information: {user}', color=0xbc0a1d)
         msg.set_thumbnail(url=user.avatar_url)
         msg.add_field(name='Username', value = f'{user.name}')
-        msg.add_field(name='Discriminator', value = f'{user.discriminator}')
         msg.add_field(name='Nick', value = f'{user.nick}')
         msg.add_field(name='ID', value = f'{user.id}')
         msg.add_field(name='Avatar URL', value = f'{user.avatar_url}')
