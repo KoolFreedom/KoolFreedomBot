@@ -1,5 +1,3 @@
-# checks.py
-
 from discord.ext import commands
 
 ADMIN_ROLES = ["Admin", "CONSOLE"]

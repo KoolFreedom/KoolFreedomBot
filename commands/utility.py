@@ -25,21 +25,47 @@ class Utility(commands.Cog):
         await ctx.send(embed=self.build_embed("Pong! 🏓", f"Latency: {latency}ms"))
 
     @commands.command()
-    async def userinfo(self, ctx, *, user: discord.Member=None):
-        if not user: user=ctx.author
-        msg = discord.Embed(title=f'User Information: {user}', color=0xbc0a1d)
-        msg.set_thumbnail(url=user.avatar_url)
-        msg.add_field(name='Username', value = f'{user.name}')
-        msg.add_field(name='Nick', value = f'{user.nick}')
-        msg.add_field(name='ID', value = f'{user.id}')
-        msg.add_field(name='Avatar URL', value = f'{user.avatar_url}')
-        msg.add_field(name='Status', value = f'{user.status}')
-        msg.add_field(name='Activity', value = f'{user.activity}')
-        msg.add_field(name='Bot?', value = f'{user.bot}')
-        msg.add_field(name='Account Creation Date', value = f'{user.created_at}')
-        msg.add_field(name='Guild Join Date', value = f'{user.joined_at}')
-        msg.add_field(name='On a Phone?', value = f'{user.is_on_mobile()}')
-        await ctx.send(embed=msg)
+    async def userinfo(self, ctx, *, user: discord.Member = None):
+        user = user or ctx.author
+
+        embed = discord.Embed(
+            title=f"User Information: {user}",
+            color=user.top_role.color if user.top_role.color.value else discord.Color.blurple()
+        )
+
+        embed.set_thumbnail(url=user.display_avatar.url)
+        embed.add_field(name="Username", value=user.name, inline=True)
+        embed.add_field(name="Nickname", value=user.nick or "None", inline=True)
+        embed.add_field(name="ID", value=user.id, inline=True)
+
+        embed.add_field(name="Status", value=str(user.status).title(), inline=True)
+        embed.add_field(name="Bot?", value="Yes" if user.bot else "No", inline=True)
+        embed.add_field(name="Top Role", value=user.top_role.mention, inline=True)
+
+        # Timestamps
+        embed.add_field(name="Account Created", value=user.created_at.strftime("%Y-%m-%d %H:%M:%S UTC"), inline=False)
+        embed.add_field(name="Joined Server", value=user.joined_at.strftime("%Y-%m-%d %H:%M:%S UTC") if user.joined_at else "N/A", inline=False)
+
+        # Activity (if present)
+        activity = user.activity.name if user.activity else "None"
+        embed.add_field(name="Activity", value=activity, inline=True)
+
+        # Mobile check
+        on_mobile = "Yes" if user.is_on_mobile() else "No"
+        embed.add_field(name="On Mobile", value=on_mobile, inline=True)
+
+        # Permissions
+        perms = [name.replace("_", " ").title() for name, value in user.guild_permissions if value]
+        formatted_perms = ", ".join(perms[:5]) + ("..." if len(perms) > 5 else "None")
+        embed.add_field(name="Key Permissions", value=formatted_perms or "None", inline=False)
+
+        # Public badges (flags)
+        if user.public_flags:
+            flags = [flag.replace("_", " ").title() for flag in user.public_flags.all()]
+            embed.add_field(name="Badges", value=", ".join(flags), inline=False)
+
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        await ctx.send(embed=embed)
     
     @commands.command()
     async def uptime(self, ctx):

@@ -43,7 +43,6 @@ class Moderation(commands.Cog):
     @is_discord_staff()
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, msgs):
-        """Purge messages from a channel."""
         channel = ctx.channel
         await channel.purge(limit=(int(msgs) + 1))
         await ctx.send(embed=discord.Embed(description=f'{ctx.author.name} deleted {msgs} messages',colour=0xbc0a1d))
@@ -106,11 +105,11 @@ class Moderation(commands.Cog):
         if mutedrole is None:
             mutedrole = discord.utils.get(ctx.guild.roles, name='muted')
         elif mutedrole is None:
-            return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xbc0a1d))
+            return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xff0004))
         await member.add_roles(mutedrole, reason = f'{reason} || by {ctx.author.name}')
         if reason == '':
             reason = 'no reason specified'
-        await ctx.send(embed=discord.Embed(description=f'{member} muted by: {ctx.author.name} for: {reason}', colour=0xbc0a1d))
+        await ctx.send(embed=discord.Embed(description=f'{member} muted by: {ctx.author.name} for: {reason}', colour=discord.Color.green))
 
     @commands.command()
     @is_discord_staff()
@@ -120,9 +119,9 @@ class Moderation(commands.Cog):
         if mutedrole is None:
             mutedrole = discord.utils.get(ctx.guild.roles, name='muted')
             if mutedrole is None:
-                return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xbc0a1d))
+                return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xff0004))
         await member.remove_roles(mutedrole, reason = f'{reason} || by {ctx.author.name}')
-        await ctx.send(embed=discord.Embed(description=f'{member} unmuted by {ctx.author.name}', colour=0xbc0a1d))
+        await ctx.send(embed=discord.Embed(description=f'{member} unmuted by {ctx.author.name}', colour=discord.Color.green))
     
     @commands.command()
     @is_discord_staff()

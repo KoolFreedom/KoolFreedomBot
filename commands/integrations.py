@@ -53,21 +53,6 @@ class Integrations(commands.Cog):
             await ctx.send(embed=self.build_embed("Error", str(e), discord.Color.red()))
 
     @commands.command()
-    async def paste(self, ctx, *, content: str):
-        url = "https://hastebin.com/documents"
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, data=content.encode()) as resp:
-                    if resp.status != 200:
-                        await ctx.send(embed=self.build_embed("Error", "Failed to upload to Hastebin.", discord.Color.red()))
-                        return
-                    data = await resp.json()
-                    paste_url = f"https://hastebin.com/{data['key']}"
-                    await ctx.send(embed=self.build_embed("Paste Created", paste_url, discord.Color.blue()))
-        except Exception as e:
-            await ctx.send(embed=self.build_embed("Error", str(e), discord.Color.red()))
-
-    @commands.command()
     async def github(self, ctx, repo: str):
         url = f"https://api.github.com/repos/{repo}/events"
         headers = {"Accept": "application/vnd.github.v3+json"}
@@ -147,16 +132,6 @@ class Integrations(commands.Cog):
                     await ctx.send(embed=self.build_embed("Random Fact", fact, discord.Color.purple()))
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", str(e), discord.Color.red()))
-
-    @commands.command(name="nowplaying", aliases=["np"])
-    async def now_playing(self, ctx):
-        activity = ctx.bot.user.activity
-        if not activity:
-            await ctx.send(embed=self.build_embed("Now Playing", "I'm not doing anything right now.", discord.Color.greyple()))
-        else:
-            name = activity.name or "Unnamed"
-            kind = type(activity).__name__.replace("Activity", "")
-            await ctx.send(embed=self.build_embed("Now Playing", f"{kind}: {name}", discord.Color.teal()))
 
 async def setup(bot):
     await bot.add_cog(Integrations(bot))
