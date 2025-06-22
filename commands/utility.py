@@ -25,13 +25,22 @@ class Utility(commands.Cog):
         await ctx.send(embed=self.build_embed("Pong! 🏓", f"Latency: {latency}ms"))
 
     @commands.command()
-    async def userinfo(self, ctx, member: discord.Member = None):
-        member = member or ctx.author
-        embed = discord.Embed(title=f"User Info - {member.display_name}", color=discord.Color.blue())
-        embed.add_field(name="ID", value=member.id, inline=True)
-        embed.add_field(name="Created", value=member.created_at.strftime('%Y-%m-%d'), inline=True)
-        embed.add_field(name="Joined", value=member.joined_at.strftime('%Y-%m-%d'), inline=True)
-        await ctx.send(embed=embed)
+    async def userinfo(self, ctx, *, user: discord.Member=None):
+        if not user: user=ctx.author
+        msg = discord.Embed(title=f'User Information: {user}', color=0xbc0a1d)
+        msg.set_thumbnail(url=user.avatar_url)
+        msg.add_field(name='Username', value = f'{user.name}')
+        msg.add_field(name='Discriminator', value = f'{user.discriminator}')
+        msg.add_field(name='Nick', value = f'{user.nick}')
+        msg.add_field(name='ID', value = f'{user.id}')
+        msg.add_field(name='Avatar URL', value = f'{user.avatar_url}')
+        msg.add_field(name='Status', value = f'{user.status}')
+        msg.add_field(name='Activity', value = f'{user.activity}')
+        msg.add_field(name='Bot?', value = f'{user.bot}')
+        msg.add_field(name='Account Creation Date', value = f'{user.created_at}')
+        msg.add_field(name='Guild Join Date', value = f'{user.joined_at}')
+        msg.add_field(name='On a Phone?', value = f'{user.is_on_mobile()}')
+        await ctx.send(embed=msg)
     
     @commands.command()
     async def uptime(self, ctx):
@@ -42,13 +51,21 @@ class Utility(commands.Cog):
     @commands.command()
     async def serverinfo(self, ctx):
         guild = ctx.guild
-        embed = discord.Embed(title=f"{guild.name} Info", color=discord.Color.blue())
-        embed.add_field(name="Owner", value=guild.owner, inline=True)
-        embed.add_field(name="Members", value=guild.member_count, inline=True)
-        embed.add_field(name="Created At", value=guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=False)
-        embed.add_field(name="Roles", value=len(guild.roles), inline=True)
-        embed.add_field(name="Channels", value=len(guild.channels), inline=True)
-        await ctx.send(embed=embed)
+        msg = discord.Embed(title='Server Information', color=0xbc0a1d)
+        msg.set_thumbnail(url=guild.icon_url_as(format='png'))
+        msg.add_field(name='Name', value = f'{guild.name}')
+        msg.add_field(name='ID', value = f'{guild.id}')
+        msg.add_field(name='Description', value = f'{guild.description}')
+        msg.add_field(name='Region', value = f'{guild.region}')
+        msg.add_field(name='Owner', value = f'{guild.owner}')
+        msg.add_field(name='Members', value = f'{guild.member_count}')
+        msg.add_field(name='Guild Creation Date', value = f'{guild.created_at}')
+        msg.add_field(name='Role Count', value = f'{len(guild.roles)}')
+        msg.add_field(name=f'Channel Count ({len(guild.channels)} Total)', value = f'{len(guild.voice_channels)} voice, {len(guild.text_channels)} text')
+        msg.add_field(name='Boost Level', value = f'{guild.premium_tier}')
+        msg.add_field(name='AFK Timeout', value = f'{guild.afk_timeout/60} minutes')
+        msg.add_field(name='AFK Channel', value = f'{guild.afk_channel}')
+        await ctx.send(embed=msg)
     
     @commands.command()
     @is_discord_staff()
@@ -122,10 +139,18 @@ class Utility(commands.Cog):
 
 
     @commands.command()
-    @is_discord_staff()
-    async def say(self, ctx, *, message: str):
-        await ctx.message.delete()
-        await ctx.send(message)
+    async def say(self, ctx, *, msg):
+        cmdmsg = ctx.message
+        #if '@everyone' in cmdmsg.content or '@here' in cmdmsg.content:
+            #msg.replace('@everyone', '[MENTIONED EVERYONE]')
+        if cmdmsg.role_mentions:
+            index = msg.find('@')
+            msg = msg[:index] + '\\'+ msg[index:]
+        await ctx.send(f'{msg}')
+        try:
+            await cmdmsg.delete()
+        except:
+            print(f"[{datetime.datetime.utcnow().replace(microsecond=0)} INFO]: [Say] Failed to delete a message.")
 
     @commands.command()
     async def ascii(self, ctx, *, text: str):
