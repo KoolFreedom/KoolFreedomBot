@@ -30,13 +30,13 @@ class Admin(commands.Cog):
     @commands.command()
     @is_bot_dev()
     async def stop(self, ctx):
-        await ctx.send("Shutting down...")
+        await ctx.send(embed=self.build_embed(f"Shutting down...", color=0xff0000))
         await self.bot.close()
 
     @commands.command()
     @is_bot_dev()
     async def restart(self, ctx):
-        await ctx.send("Restarting...")
+        await ctx.send(embed=self.build_embed(f"Restarting...", color=0xff0000))
         await self.bot.close()
         os.execv(sys.executable, [sys.executable] + sys.argv)
     

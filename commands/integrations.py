@@ -87,18 +87,43 @@ class Integrations(commands.Cog):
                     latest = data[0]
                     event_type = latest.get("type", "Unknown Event")
                     actor = latest["actor"]["login"]
-                    action = f"{actor} triggered a **{event_type}** event"
-
+                    payload = latest.get("payload", {})
                     embed = discord.Embed(
                         title=f"{repo}",
-                        description=action,
                         url=f"https://github.com/{repo}",
                         color=discord.Color.blurple()
                     )
                     embed.set_footer(text="Latest GitHub event")
+
+                    if event_type == "PushEvent":
+                        commits = payload.get("commits", [])
+                        commit_msgs = "\n".join(f"- {c['message']}" for c in commits[:3])
+                        commit_count = len(commits)
+                        description = f"📦 **Push by {actor}** with {commit_count} commit(s):\n{commit_msgs}"
+                        embed.description = description
+
+                    elif event_type == "PullRequestEvent":
+                        action = payload.get("action", "unknown action")
+                        pr = payload.get("pull_request", {})
+                        title = pr.get("title", "Untitled")
+                        url = pr.get("html_url", f"https://github.com/{repo}/pulls")
+                        embed.description = f"🔀 **Pull Request {action}** by {actor}: [{title}]({url})"
+
+                    elif event_type == "IssuesEvent":
+                        action = payload.get("action", "unknown action")
+                        issue = payload.get("issue", {})
+                        title = issue.get("title", "Untitled Issue")
+                        url = issue.get("html_url", f"https://github.com/{repo}/issues")
+                        embed.description = f"🐛 **Issue {action}** by {actor}: [{title}]({url})"
+
+                    else:
+                        embed.description = f"📌 **{event_type}** triggered by **{actor}**"
+
                     await ctx.send(embed=embed)
+
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", str(e), discord.Color.red()))
+
 
     @commands.command()
     async def fact(self, ctx):
