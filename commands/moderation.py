@@ -1,32 +1,15 @@
 import discord
-import os
-import json
 import asyncio
 import re
-from datetime import datetime
 from discord.ext import commands
-from discord.ext.commands import Context
 from checks import is_discord_staff
-
-WARNINGS_FILE = "data/warnings.json"
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.sniped_messages = {}
 
     def build_embed(self, title, description, color=discord.Color.blue()):
         return discord.Embed(title=title, description=description, color=color)
-
-    def load_warnings():
-        if not os.path.exists(WARNINGS_FILE):
-            return {}
-        with open(WARNINGS_FILE, "r") as f:
-            return json.load(f)
-
-    def save_warnings(data):
-        with open(WARNINGS_FILE, "w") as f:
-            json.dump(data, f, indent=4)
     
     def parse_time(time_str: str) -> int:
         """
