@@ -1,6 +1,7 @@
 import discord
 import os
 import sys
+import subprocess
 from discord.ext import commands
 from checks import is_discord_staff, is_bot_dev
 
@@ -48,6 +49,39 @@ class Admin(commands.Cog):
             await ctx.send(embed=self.build_embed("Reloaded", f"Successfully reloaded `{cog}`", discord.Color.green()))
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f"Failed to reload `{cog}`\n```{e}```", discord.Color.red()))
+
+    @commands.command(aliases=["updatebot", "pull"])
+    @is_bot_dev()
+    async def gitpull(self, ctx):
+        try:
+            result = subprocess.run(
+                ["git", "pull"],
+                capture_output=True,
+                text=True
+            )
+            output = result.stdout or result.stderr
+            color = discord.Color.green() if result.returncode == 0 else discord.Color.red()
+
+            embed = discord.Embed(
+                title="🔄 Git Pull Result",
+                description=f"```{output.strip()}```",
+                color=color
+            )
+            await ctx.send(embed=embed)
+
+            if result.returncode != 0:
+                return  # Don't restart if pull failed
+
+            await ctx.send("♻️ Update complete. Restarting bot...")
+
+            # Optional: give Discord time to receive the message
+            await self.bot.close()  # Clean disconnect from Discord
+
+            # Restart process
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+
+        except Exception as e:
+            await ctx.send(f"❌ Error during git pull or restart:\n```{e}```")
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))
