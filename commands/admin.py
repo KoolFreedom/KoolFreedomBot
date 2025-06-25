@@ -1,7 +1,6 @@
 import discord
 import os
 import sys
-import subprocess
 from discord.ext import commands
 from checks import is_discord_staff, is_bot_dev
 

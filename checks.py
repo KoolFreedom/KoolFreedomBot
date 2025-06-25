@@ -25,7 +25,7 @@ def is_discord_staff():
 def is_bot_dev():
     async def predicate(ctx):
         user_id = ctx.author.id
-        user_tag = f"{ctx.author.name}#{ctx.author.discriminator}"
+        user_tag = f"{ctx.author.name}"
         return user_id in BOT_DEVELOPERS or user_tag in BOT_DEVELOPERS
     return commands.check(predicate)
 
