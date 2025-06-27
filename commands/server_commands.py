@@ -44,6 +44,40 @@ class Server_Commands(commands.Cog):
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
 
+    @commands.command()
+    @is_admin_officer()
+    @commands.has_permissions(manage_roles=True)
+    async def appban(self, ctc, member: discord.Member):
+        role = discord.utils.get(ctx.guild.roles, name="Application Banned")
+        if not role:
+            await ctx.send(embed=self.build_embed("Role Not Found", "'Application Banned' role not found.", discord.Color.red()))
+            return
+
+        try:
+            await member.add_roles(role)
+            await ctx.send(embed=self.build_embed("Role Added", f"Added Application Banned role to {member.display_name}.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
+        except Exception as e:
+            await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
+
+    @commands.command()
+    @is_admin_officer()
+    @commands.has_permissions(manage_roles=True)
+    async def appunban(self, ctx, member: discord.Member):
+        role = discord.utils.get(ctx.guild.roles, name="Application Banned")
+        if not role:
+            await ctx.send(embed=self.build_embed("Role Not Found", "'Application Banned' role not found.", discord.Color.red()))
+            return
+
+        try:
+            await member.remove_roles(role)
+            await ctx.send(embed=self.build_embed("Role Removed", f"Removed Application Banned role from {member.display_name}.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove that role.", discord.Color.red()))
+        except Exception as e:
+            await ctx.send(embed=self.build_embed("Error", f":x: {e}", discord.Color.red()))
+
     @commands.command() 
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
