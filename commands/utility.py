@@ -121,6 +121,7 @@ class Utility(commands.Cog):
         embed.add_field(name="Members", value=len(role.members))
         embed.add_field(name="Created At", value=role.created_at.strftime("%Y-%m-%d"))
         embed.add_field(name="Mentionable", value=role.mentionable)
+        embed.add_field(name="Color", value=str(role.color))
         await ctx.send(embed=embed)
 
 
