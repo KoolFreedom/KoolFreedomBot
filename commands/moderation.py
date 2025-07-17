@@ -83,28 +83,31 @@ class Moderation(commands.Cog):
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
-    async def mute(self, ctx, member: discord.Member, *, reason="No reason provided."):
-        mutedrole = discord.utils.get(ctx.guild.roles, name='Muted')
-        if mutedrole is None:
-            mutedrole = discord.utils.get(ctx.guild.roles, name='muted')
-        elif mutedrole is None:
-            return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xff0004))
-        await member.add_roles(mutedrole, reason = f'{reason} || by {ctx.author.name}')
-        if reason == '':
-            reason = 'no reason specified'
-        await ctx.send(embed=discord.Embed(description=f'{member} muted by: {ctx.author.name} for: {reason}', colour=discord.Color.green))
+    async def mute(self, ctx, member: discord.Member, *, reason="No reason provided"):
+        muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+        if not muted_role:
+            await ctx.send(embed=self.build_embed("Missing Role", "Muted role does not exist", discord.Color.red))
+            return
+        try:
+            await member.add_roles(muted_role)
+            await ctx.send(embed=self.build_embed("Muted", f"{member.display_name} has been muted.\nReason: {reason}", discord.Color.green))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permissions Error", "I do not have permission to do this", discord.Color.red))
 
     @commands.command()
     @is_discord_staff()
     @commands.has_permissions(manage_roles=True)
-    async def unmute(self, ctx, member: discord.Member, *, reason=''):
-        mutedrole = discord.utils.get(ctx.guild.roles, name='Muted')
-        if mutedrole is None:
-            mutedrole = discord.utils.get(ctx.guild.roles, name='muted')
-            if mutedrole is None:
-                return await ctx.send(embed=discord.Embed(description="Role Muted doesn't exist", colour=0xff0004))
-        await member.remove_roles(mutedrole, reason = f'{reason} || by {ctx.author.name}')
-        await ctx.send(embed=discord.Embed(description=f'{member} unmuted by {ctx.author.name}', colour=discord.Color.green))
+    async def unmute(self, ctx, member: discord.Member):
+        muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+        if not muted_role:
+            await ctx.send(embed=self.build_embed("Missing Role", "Muted role does not exist.", discord.Color.red()))
+            return
+
+        try:
+            await member.remove_roles(muted_role)
+            await ctx.send(embed=self.build_embed("User Unmuted", f"{member.display_name} has been unmuted.", discord.Color.green()))
+        except discord.Forbidden:
+            await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove roles.", discord.Color.red()))
     
     @commands.command()
     @is_discord_staff()

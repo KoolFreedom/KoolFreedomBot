@@ -1,11 +1,11 @@
 from discord.ext import commands
 
-ADMIN_ROLES = ["Admin", "CONSOLE"]
-SENIOR_ROLES = ["Senior Admin", "Executive", "Assistant Executive"]
-DISCORD_STAFF_ROLES = ["Discord Moderator", "Discord Administrator"]
+ADMIN_ROLES = ["Admin", "CONSOLE", "Administrator", "Console Access"]
+SENIOR_ROLES = ["Senior Admin", "Executive", "Assistant Executive", "Senior Staff"]
+DISCORD_STAFF_ROLES = ["Discord Moderator", "Discord Administrator", "Server Owner"]
 ADMIN_OFFICER = ["Admin Officer"]
 MB_MANAGER = ["MB Manager"]
-BOT_DEVELOPERS = [373969695633571842, 712528833936621730, 919085826875469834]
+BOT_DEVELOPERS = ["gamingto12", "0x7694c9", "zLiGxD"]
 
 def is_admin():
     async def predicate(ctx):

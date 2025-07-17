@@ -47,7 +47,7 @@ class Server_Commands(commands.Cog):
     @commands.command()
     @is_admin_officer()
     @commands.has_permissions(manage_roles=True)
-    async def appban(self, ctc, member: discord.Member):
+    async def appban(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name="Application Banned")
         if not role:
             await ctx.send(embed=self.build_embed("Role Not Found", "'Application Banned' role not found.", discord.Color.red()))
