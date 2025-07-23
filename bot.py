@@ -3,6 +3,7 @@ from discord.ext import commands
 import os
 import json
 import asyncio
+from punishment_manager import get_user_roles
 
 def get_prefix(bot, message):
     with open("prefixes.json", "r") as f:
@@ -38,6 +39,17 @@ async def load_cogs():
                 print(f"✅ Loaded: {filename}")
             except Exception as e:
                 print(f"❌ Failed to load {filename}: {e}")
+
+@commands.Cog.listener()
+async def on_member_join(self, member):
+    role_ids = get_user_roles(member.guild.id, member.id)
+    for rid in role_ids:
+        role = member.guild.get_role(int(rid))
+        if role:
+            try:
+                await member.add_roles(role, reason="Reapplying persistent punishment")
+            except discord.Forbidden:
+                print(f"Missing permission to reapply role {role.name}")
 
 async def main():
     async with bot:
