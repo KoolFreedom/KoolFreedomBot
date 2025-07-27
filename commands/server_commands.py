@@ -88,11 +88,12 @@ class Server_Commands(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def exile(self, ctx, member: discord.Member):
         role = discord.utils.get(ctx.guild.roles, name = "Exiled")
+        member_role = discord.utils.get(ctx.guild.roles, name = "Members")
         if not role:
             await ctx.send(embed=self.build_embed("Role Not Found", "'Exiled' role not found.", discord.Color.red()))
             return
         try:
-            await member.remove_roles(all)
+            await member.remove_roles(member_role)
             await member.add_roles(role)
             add_punishment(ctx.guild.id, member.id, role.id, "exile")
             await ctx.send(embed=self.build_embed("", f"Exiled {member.display_name}.", discord.Color.red()))
