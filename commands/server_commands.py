@@ -22,7 +22,7 @@ class Server_Commands(commands.Cog):
     
         try:
             await member.add_roles(role)
-            add_punishment(ctx.guild.id, member.id, role.id, "serverban")
+#            add_punishment(ctx.guild.id, member.id, role.id, "serverban")
             await ctx.send(embed=self.build_embed("Role Added", f"Added Server Banned role to {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
@@ -40,7 +40,7 @@ class Server_Commands(commands.Cog):
 
         try:
             await member.remove_roles(role)
-            remove_punishment(ctx.guild.id, member.id, role.id, "serverban")
+#            remove_punishment(ctx.guild.id, member.id, role.id, "serverban")
             await ctx.send(embed=self.build_embed("Role Removed", f"Removed Server Banned role from {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove that role.", discord.Color.red()))
@@ -58,7 +58,7 @@ class Server_Commands(commands.Cog):
 
         try:
             await member.add_roles(role)
-            add_punishment(ctx.guild.id, role.id, member.id, "application_ban")
+#            add_punishment(ctx.guild.id, role.id, member.id, "application_ban")
             await ctx.send(embed=self.build_embed("Role Added", f"Added Application Banned role to {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
@@ -76,7 +76,7 @@ class Server_Commands(commands.Cog):
 
         try:
             await member.remove_roles(role)
-            remove_punishment(ctx.guild.id, member.id, role.id, "application_ban")
+#            remove_punishment(ctx.guild.id, member.id, role.id, "application_ban")
             await ctx.send(embed=self.build_embed("Role Removed", f"Removed Application Banned role from {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to remove that role.", discord.Color.red()))
@@ -95,7 +95,7 @@ class Server_Commands(commands.Cog):
         try:
             await member.remove_roles(member_role)
             await member.add_roles(role)
-            add_punishment(ctx.guild.id, member.id, role.id, "exile")
+#            add_punishment(ctx.guild.id, member.id, role.id, "exile")
             await ctx.send(embed=self.build_embed("", f"Exiled {member.display_name}.", discord.Color.red()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
@@ -114,7 +114,7 @@ class Server_Commands(commands.Cog):
         try:
             await member.add_roles(member_role)
             await member.remove_roles(role)
-            remove_punishment(ctx.guild.id, member.id, role.id, "exile")
+#            remove_punishment(ctx.guild.id, member.id, role.id, "exile")
             await ctx.send(embed=self.build_embed("", f"Forgave {member.display_name}.", discord.Color.green()))
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
