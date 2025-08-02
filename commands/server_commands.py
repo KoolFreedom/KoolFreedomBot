@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from checks import is_admin, is_discord_staff, is_admin_officer
-from punishment_manager import add_punishment, remove_punishment
 
 
 class Server_Commands(commands.Cog):
