@@ -3,6 +3,7 @@ import os
 import sys
 from discord.ext import commands
 from checks import is_discord_staff, is_bot_dev
+from util.punishment_manager import get_user_roles
 
 class Admin(commands.Cog):
     def __init__(self, bot):
@@ -48,6 +49,13 @@ class Admin(commands.Cog):
             await ctx.send(embed=self.build_embed("Reloaded", f"Successfully reloaded `{cog}`", discord.Color.green()))
         except Exception as e:
             await ctx.send(embed=self.build_embed("Error", f"Failed to reload `{cog}`\n```{e}```", discord.Color.red()))
+    
+    @commands.command()
+    @is_bot_dev()
+    async def show_persist(self, ctx, member: discord.Member):
+        roles = get_user_roles(ctx.guild.id, member.id)
+        await ctx.send(f"Stored roles: {roles}")
+
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))

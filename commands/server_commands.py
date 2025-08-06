@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from checks import is_admin, is_discord_staff, is_admin_officer
+from util.punishment_manager import add_punishment, remove_punishment
 
 
 class Server_Commands(commands.Cog):
@@ -91,6 +92,7 @@ class Server_Commands(commands.Cog):
             await member.remove_roles(member_role)
             await member.add_roles(role)
             await ctx.send(embed=self.build_embed("", f"Exiled {member.display_name}.", discord.Color.red()))
+            add_punishment(ctx.guild.id, member.id, role.id, "exile")
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
         except Exception as e:
@@ -109,6 +111,7 @@ class Server_Commands(commands.Cog):
             await member.add_roles(member_role)
             await member.remove_roles(role)
             await ctx.send(embed=self.build_embed("", f"Forgave {member.display_name}.", discord.Color.green()))
+            remove_punishment(ctx.guild.id, member.id, "exile")
         except discord.Forbidden:
             await ctx.send(embed=self.build_embed("Permission Error", "I don't have permission to assign that role.", discord.Color.red()))
         except Exception as e:
