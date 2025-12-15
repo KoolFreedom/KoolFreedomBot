@@ -89,7 +89,7 @@ class Server_Commands(commands.Cog):
             await ctx.send(embed=self.build_embed("Role Not Found", "'Exiled' role not found.", discord.Color.red()))
             return
         try:
-            if member_role in member.roles:
+            if member_role is not None and member_role in member.roles:
                 await member.remove_roles(member_role)
             await member.add_roles(role)
             await ctx.send(embed=self.build_embed("", f"Exiled {member.display_name}.", discord.Color.red()))
@@ -109,7 +109,7 @@ class Server_Commands(commands.Cog):
             await ctx.send(embed=self.build_embed("Role Not Found", "'Exiled' role not found.", discord.Color.red()))
             return
         try:
-            if member_role not in member.roles:
+            if member_role is not None and member_role not in member.roles:
                 await member.add_roles(member_role)
             await member.remove_roles(role)
             await ctx.send(embed=self.build_embed("", f"Forgave {member.display_name}.", discord.Color.green()))
